@@ -3,7 +3,10 @@ package pingpong.main;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import java.util.Random;
@@ -20,14 +23,26 @@ public class Main extends ApplicationAdapter {
     private Ball ball;
     private Random rng;
     private State state;
+    private SpriteBatch batch;
+    private BitmapFont font;
+    private String testMessage;
 
 
     @Override
     public void create() {
+        batch = new SpriteBatch();
+        font = new BitmapFont(Gdx.files.internal("arcadeFont.fnt"));
+        font.setColor(Color.WHITE); // Configura el color del texto
+        font.getData().setScale(2);// Configura el tamaño de la fuente
+        testMessage= "Hola mundolf";
+
+
         state = State.RUNNING;
+
         player1 = new Paddle();
         player2 = new Paddle();
         ball = new Ball();
+
         shape = new ShapeRenderer();
 
         player1.setX(50f);
@@ -119,12 +134,20 @@ public class Main extends ApplicationAdapter {
                 break;
         }
 
+
+
+
+        batch.begin();
+        font.draw(batch,testMessage,Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+        batch.end();
+
         shape.setAutoShapeType(true);
         shape.begin(ShapeRenderer.ShapeType.Filled);
         shape.rect(player2.getX(), player2.getY(), player2.getWidth(), player2.getHeight());
         shape.rect(player1.getX(), player1.getY(), player1.getWidth(), player1.getHeight());
         shape.rect(ball.getX(), ball.getY(), ball.getWidth(), ball.getHeight());
         shape.end();
+
     }
 
     private void reset() {
