@@ -24,7 +24,8 @@ public class Main extends ApplicationAdapter {
     private Random rng;
     private State state;
     private SpriteBatch batch;
-    private BitmapFont font;
+    private BitmapFont fontMessage;
+    private BitmapFont fontScoreMessage;
     private String testMessage;
     private int p1Score;
     private int p2Score;
@@ -33,9 +34,14 @@ public class Main extends ApplicationAdapter {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        font = new BitmapFont(Gdx.files.internal("arcadeFont.fnt"));
-        font.setColor(Color.WHITE); // Configura el color del texto
-        font.getData().setScale(2);// Configura el tamaño de la fuente
+        fontMessage = new BitmapFont(Gdx.files.internal("arcadeFont.fnt"));
+        fontMessage.setColor(Color.WHITE); // Configura el color del texto
+        fontMessage.getData().setScale(2);// Configura el tamaño de la fuente
+
+        fontScoreMessage= new BitmapFont(Gdx.files.internal("arcadeFont.fnt"));
+        fontScoreMessage.setColor(Color.WHITE); // Configura el color del texto
+        fontScoreMessage.getData().setScale(4);// Configura el tamaño de la fuente
+
         testMessage= "";
 
 
@@ -158,9 +164,9 @@ public class Main extends ApplicationAdapter {
 
 
         batch.begin();
-        font.draw(batch,testMessage,575f, 950f);
-        font.draw(batch,String.valueOf(p1Score),875f,850f);
-        font.draw(batch,String.valueOf(p2Score),1075f,850f);
+        fontMessage.draw(batch,testMessage,575f, 950f);
+        fontScoreMessage.draw(batch,String.valueOf(p1Score),(Gdx.graphics.getWidth()/2)-300f,850f);
+        fontScoreMessage.draw(batch,String.valueOf(p2Score),(Gdx.graphics.getWidth()/2)+200f,850f);
         batch.end();
 
         shape.setAutoShapeType(true);
@@ -184,7 +190,7 @@ public class Main extends ApplicationAdapter {
     @Override
     public void dispose() {
         shape.dispose();
-        font.dispose();
+        fontMessage.dispose();
 
     }
 }
