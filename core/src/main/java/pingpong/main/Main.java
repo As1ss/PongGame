@@ -34,7 +34,7 @@ public class Main extends ApplicationAdapter {
         font = new BitmapFont(Gdx.files.internal("arcadeFont.fnt"));
         font.setColor(Color.WHITE); // Configura el color del texto
         font.getData().setScale(2);// Configura el tamaño de la fuente
-        testMessage= "Hola mundolf";
+        testMessage= "Hola mundolff";
 
 
         state = State.RUNNING;
