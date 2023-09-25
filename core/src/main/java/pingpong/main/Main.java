@@ -26,6 +26,8 @@ public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private BitmapFont font;
     private String testMessage;
+    private int p1Score;
+    private int p2Score;
 
 
     @Override
@@ -34,10 +36,13 @@ public class Main extends ApplicationAdapter {
         font = new BitmapFont(Gdx.files.internal("arcadeFont.fnt"));
         font.setColor(Color.WHITE); // Configura el color del texto
         font.getData().setScale(2);// Configura el tamaño de la fuente
-        testMessage= "Hola mundolff";
+        testMessage= "";
 
 
         state = State.RUNNING;
+
+        p1Score =0;
+        p2Score= 0;
 
         player1 = new Paddle();
         player2 = new Paddle();
@@ -64,6 +69,7 @@ public class Main extends ApplicationAdapter {
         getBallMoves();
         getPlayer1Moves();
         getPlayer2Moves();
+        scoreEvent();
 
 
     }
@@ -94,10 +100,26 @@ public class Main extends ApplicationAdapter {
             ball.setxSpeed(-xSpeedRng);
         }
 
-        if (ball.getX() < 0f || ball.getX() + ball.getWidth() > Gdx.graphics.getWidth()) {
+
+
+
+
+
+    }
+
+    private void scoreEvent() {
+        //Player 2 score
+        if (ball.getX() < 0f){
+            testMessage="Player 2 scored!!";
+            p2Score++;
             state = State.PAUSED;
         }
-
+        //Player 1 score
+        if(ball.getX() + ball.getWidth() > Gdx.graphics.getWidth()) {
+            testMessage="Player 1 scored!!";
+            p1Score++;
+            state = State.PAUSED;
+        }
 
     }
 
@@ -135,10 +157,10 @@ public class Main extends ApplicationAdapter {
         }
 
 
-
-
         batch.begin();
-        font.draw(batch,testMessage,Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+        font.draw(batch,testMessage,575f, 950f);
+        font.draw(batch,String.valueOf(p1Score),875f,850f);
+        font.draw(batch,String.valueOf(p2Score),1075f,850f);
         batch.end();
 
         shape.setAutoShapeType(true);
@@ -154,6 +176,7 @@ public class Main extends ApplicationAdapter {
         ball.setX(Gdx.graphics.getWidth() / 2);
         ball.setY(Gdx.graphics.getHeight() / 2);
         if(Gdx.input.isKeyPressed(Input.Keys.ENTER)){
+            testMessage="";
             state=State.RUNNING;
         }
     }
@@ -161,6 +184,7 @@ public class Main extends ApplicationAdapter {
     @Override
     public void dispose() {
         shape.dispose();
+        font.dispose();
 
     }
 }
