@@ -29,13 +29,15 @@ public class Main extends ApplicationAdapter {
     private BitmapFont fontMessage;
     private BitmapFont fontScoreMessage;
     private String testMessage;
+    private BitmapFont fontFpsMetter;
     private int p1Score;
     private int p2Score;
 
     private boolean continueCooldown = false;
-    private long cooldownStartTime= 0;
+    private long cooldownStartTime = 0;
     private long cooldownDuration = 1200000000L;
 
+    private boolean gameOver;
 
     @Override
     public void create() {
@@ -47,6 +49,11 @@ public class Main extends ApplicationAdapter {
         fontScoreMessage = new BitmapFont(Gdx.files.internal("arcadeFont.fnt"));
         fontScoreMessage.setColor(Color.WHITE); // Configura el color del texto
         fontScoreMessage.getData().setScale(4);// Configura el tamaño de la fuente
+
+
+        fontFpsMetter= new BitmapFont(Gdx.files.internal("arcadeFont.fnt"));
+        fontFpsMetter.setColor(Color.WHITE); // Configura el color del texto
+        fontFpsMetter.getData().setScale(1.2f);// Configura el tamaño de la fuente
 
         testMessage = "";
 
@@ -65,7 +72,7 @@ public class Main extends ApplicationAdapter {
         player1.setX(50f);
         player1.setY(Gdx.graphics.getHeight() / 2);
 
-        player2.setX(Gdx.graphics.getWidth() - 50f);
+        player2.setX(Gdx.graphics.getWidth() - 75f);
         player2.setY(Gdx.graphics.getHeight() / 2);
         player2.setySpeed(10f);
 
@@ -75,10 +82,11 @@ public class Main extends ApplicationAdapter {
 
         continueCooldown = false;
         cooldownStartTime = 0;
-
+        gameOver = false;
 
 
     }
+
 
     public void update() {
 
@@ -93,7 +101,7 @@ public class Main extends ApplicationAdapter {
 
     private void getBallMoves() {
         rng = new Random();
-        float xSpeedRng = rng.nextFloat() * 20f;
+        float xSpeedRng = 14f + rng.nextFloat() * (24f - 14f);
         ball.setX(ball.getX() + ball.getxSpeed());
         ball.setY(ball.getY() + ball.getySpeed());
 
@@ -135,6 +143,31 @@ public class Main extends ApplicationAdapter {
             state = State.PAUSED;
             cooldownStartTime = TimeUtils.nanoTime();
         }
+        if (p1Score == 10 || p2Score == 10) {
+            gameOverEvent();
+        }
+
+
+    }
+
+    private void gameOverEvent() {
+        gameOver = true;
+
+        if (p1Score == 10 && gameOver) {
+            testMessage = "   Player 1 has won!!\nTap screen to play again";
+            state = State.PAUSED;
+            cooldownStartTime = TimeUtils.nanoTime();
+            gameOver = false;
+
+        }
+        if (p2Score == 10 && gameOver) {
+            testMessage = "   Player 2 has won!!\nTap screen to play again";
+            state = State.PAUSED;
+            cooldownStartTime = TimeUtils.nanoTime();
+            gameOver = false;
+
+        }
+
 
     }
 
@@ -173,9 +206,10 @@ public class Main extends ApplicationAdapter {
 
 
         batch.begin();
-        fontMessage.draw(batch, testMessage, 475f, 1050f);
-        fontScoreMessage.draw(batch, String.valueOf(p1Score), (Gdx.graphics.getWidth() / 2) - 300f, (Gdx.graphics.getHeight() / 2f) + 50f);
-        fontScoreMessage.draw(batch, String.valueOf(p2Score), (Gdx.graphics.getWidth() / 2) + 200f, (Gdx.graphics.getHeight() / 2f) + 50f);
+        fontMessage.draw(batch, testMessage, 375f, 1050f);
+        fontFpsMetter.draw(batch,"FPS: "+String.valueOf(Gdx.graphics.getFramesPerSecond()),Gdx.graphics.getWidth()-375f, 1050f);
+        fontScoreMessage.draw(batch, String.valueOf(p1Score), (Gdx.graphics.getWidth() / 2) - 400f, (Gdx.graphics.getHeight() / 2f) + 50f);
+        fontScoreMessage.draw(batch, String.valueOf(p2Score), (Gdx.graphics.getWidth() / 2) + 300f, (Gdx.graphics.getHeight() / 2f) + 50f);
         batch.end();
 
         shape.setAutoShapeType(true);
@@ -198,6 +232,10 @@ public class Main extends ApplicationAdapter {
             state = State.RUNNING;
             cooldownStartTime = currentTime; // Restablecer el tiempo de inicio del cooldown
             continueCooldown = true; // Habilitar el cooldown nuevamente
+            if (gameOver == false && p1Score == 10 || p2Score == 10) {
+                p1Score = 0;
+                p2Score = 0;
+            }
         }
 
     }
