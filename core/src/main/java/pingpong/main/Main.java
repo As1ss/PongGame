@@ -31,6 +31,8 @@ public class Main extends ApplicationAdapter {
     private int p2Score;
 
 
+
+
     @Override
     public void create() {
         batch = new SpriteBatch();
@@ -38,17 +40,17 @@ public class Main extends ApplicationAdapter {
         fontMessage.setColor(Color.WHITE); // Configura el color del texto
         fontMessage.getData().setScale(2);// Configura el tamaño de la fuente
 
-        fontScoreMessage= new BitmapFont(Gdx.files.internal("arcadeFont.fnt"));
+        fontScoreMessage = new BitmapFont(Gdx.files.internal("arcadeFont.fnt"));
         fontScoreMessage.setColor(Color.WHITE); // Configura el color del texto
         fontScoreMessage.getData().setScale(4);// Configura el tamaño de la fuente
 
-        testMessage= "";
+        testMessage = "";
 
 
         state = State.RUNNING;
 
-        p1Score =0;
-        p2Score= 0;
+        p1Score = 0;
+        p2Score = 0;
 
         player1 = new Paddle();
         player2 = new Paddle();
@@ -80,6 +82,7 @@ public class Main extends ApplicationAdapter {
 
     }
 
+
     private void getBallMoves() {
         rng = new Random();
         float xSpeedRng = rng.nextFloat() * 20f;
@@ -107,22 +110,18 @@ public class Main extends ApplicationAdapter {
         }
 
 
-
-
-
-
     }
 
     private void scoreEvent() {
         //Player 2 score
-        if (ball.getX() < 0f){
-            testMessage="Player 2 scored!!";
+        if (ball.getX() < 0f) {
+            testMessage = "   Player 2 scored!!\nTap screen to continue";
             p2Score++;
             state = State.PAUSED;
         }
         //Player 1 score
-        if(ball.getX() + ball.getWidth() > Gdx.graphics.getWidth()) {
-            testMessage="Player 1 scored!!";
+        if (ball.getX() + ball.getWidth() > Gdx.graphics.getWidth()) {
+            testMessage = "   Player 1 scored!!\nTap screen to continue";
             p1Score++;
             state = State.PAUSED;
         }
@@ -164,9 +163,9 @@ public class Main extends ApplicationAdapter {
 
 
         batch.begin();
-        fontMessage.draw(batch,testMessage,575f, 950f);
-        fontScoreMessage.draw(batch,String.valueOf(p1Score),(Gdx.graphics.getWidth()/2)-300f,850f);
-        fontScoreMessage.draw(batch,String.valueOf(p2Score),(Gdx.graphics.getWidth()/2)+200f,850f);
+        fontMessage.draw(batch, testMessage, 475f, 1050f);
+        fontScoreMessage.draw(batch, String.valueOf(p1Score), (Gdx.graphics.getWidth() / 2) - 300f, (Gdx.graphics.getHeight() / 2f) + 50f);
+        fontScoreMessage.draw(batch, String.valueOf(p2Score), (Gdx.graphics.getWidth() / 2) + 200f, (Gdx.graphics.getHeight() / 2f) + 50f);
         batch.end();
 
         shape.setAutoShapeType(true);
@@ -181,9 +180,9 @@ public class Main extends ApplicationAdapter {
     private void reset() {
         ball.setX(Gdx.graphics.getWidth() / 2);
         ball.setY(Gdx.graphics.getHeight() / 2);
-        if(Gdx.input.isKeyPressed(Input.Keys.ENTER)){
-            testMessage="";
-            state=State.RUNNING;
+        if (Gdx.input.isTouched()) {
+            testMessage = "";
+            state = State.RUNNING;
         }
     }
 
@@ -193,4 +192,5 @@ public class Main extends ApplicationAdapter {
         fontMessage.dispose();
 
     }
+
 }
