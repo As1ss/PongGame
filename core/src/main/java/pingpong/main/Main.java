@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.Logger;
+import com.badlogic.gdx.utils.TimeUtils;
 
 import java.util.Random;
 
@@ -30,7 +32,9 @@ public class Main extends ApplicationAdapter {
     private int p1Score;
     private int p2Score;
 
-
+    private boolean continueCooldown = false;
+    private long cooldownStartTime= 0;
+    private long cooldownDuration = 1200000000L;
 
 
     @Override
@@ -68,6 +72,10 @@ public class Main extends ApplicationAdapter {
 
         ball.setX(Gdx.graphics.getWidth() / 2);
         ball.setY(Gdx.graphics.getHeight() / 2);
+
+        continueCooldown = false;
+        cooldownStartTime = 0;
+
 
 
     }
@@ -118,12 +126,14 @@ public class Main extends ApplicationAdapter {
             testMessage = "   Player 2 scored!!\nTap screen to continue";
             p2Score++;
             state = State.PAUSED;
+            cooldownStartTime = TimeUtils.nanoTime();
         }
         //Player 1 score
         if (ball.getX() + ball.getWidth() > Gdx.graphics.getWidth()) {
             testMessage = "   Player 1 scored!!\nTap screen to continue";
             p1Score++;
             state = State.PAUSED;
+            cooldownStartTime = TimeUtils.nanoTime();
         }
 
     }
@@ -180,10 +190,16 @@ public class Main extends ApplicationAdapter {
     private void reset() {
         ball.setX(Gdx.graphics.getWidth() / 2);
         ball.setY(Gdx.graphics.getHeight() / 2);
-        if (Gdx.input.isTouched()) {
+        long currentTime = TimeUtils.nanoTime();
+
+
+        if (Gdx.input.isTouched() && (currentTime - cooldownStartTime >= cooldownDuration || !continueCooldown)) {
             testMessage = "";
             state = State.RUNNING;
+            cooldownStartTime = currentTime; // Restablecer el tiempo de inicio del cooldown
+            continueCooldown = true; // Habilitar el cooldown nuevamente
         }
+
     }
 
     @Override
