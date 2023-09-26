@@ -115,7 +115,8 @@ public class Main extends ApplicationAdapter {
 
     private void initialEvent() {
         if (startGame) {
-            testMessage = "The game has begun!\nTap screen to start.";
+
+            testMessage = "  The game has begun!\nTap screen to continue";
             startGame = false;
         }
 
