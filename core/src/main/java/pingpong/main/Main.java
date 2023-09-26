@@ -3,6 +3,7 @@ package pingpong.main;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -39,6 +40,13 @@ public class Main extends ApplicationAdapter {
 
     private boolean gameOver;
 
+    private boolean startGame;
+
+    private Sound paddleHit;
+    private Sound wallHit;
+    private Sound score;
+
+
     @Override
     public void create() {
         batch = new SpriteBatch();
@@ -51,14 +59,14 @@ public class Main extends ApplicationAdapter {
         fontScoreMessage.getData().setScale(4);// Configura el tamaño de la fuente
 
 
-        fontFpsMetter= new BitmapFont(Gdx.files.internal("arcadeFont.fnt"));
+        fontFpsMetter = new BitmapFont(Gdx.files.internal("arcadeFont.fnt"));
         fontFpsMetter.setColor(Color.WHITE); // Configura el color del texto
         fontFpsMetter.getData().setScale(1.2f);// Configura el tamaño de la fuente
 
         testMessage = "";
 
 
-        state = State.RUNNING;
+        state = State.PAUSED;
 
         p1Score = 0;
         p2Score = 0;
@@ -83,6 +91,11 @@ public class Main extends ApplicationAdapter {
         continueCooldown = false;
         cooldownStartTime = 0;
         gameOver = false;
+        startGame = true;
+
+        paddleHit = Gdx.audio.newSound(Gdx.files.internal("paddle_hit.wav"));
+        wallHit = Gdx.audio.newSound(Gdx.files.internal("wall_hit.wav"));
+        score = Gdx.audio.newSound(Gdx.files.internal("score.wav"));
 
 
     }
@@ -90,10 +103,21 @@ public class Main extends ApplicationAdapter {
 
     public void update() {
 
+
+        initialEvent();
         getBallMoves();
         getPlayer1Moves();
         getPlayer2Moves();
         scoreEvent();
+
+
+    }
+
+    private void initialEvent() {
+        if (startGame) {
+            testMessage = "The game has begun!\nTap screen to start.";
+            startGame = false;
+        }
 
 
     }
@@ -111,9 +135,11 @@ public class Main extends ApplicationAdapter {
             ball.getY() < player1.getY() + player1.getHeight() &&
             ball.getY() + ball.getHeight() > player1.getY()) {
             ball.setxSpeed(xSpeedRng);
+            paddleHit.play();
         }
         if (ball.getY() < 0f || ball.getY() + ball.getHeight() > Gdx.graphics.getHeight()) {
             ball.setySpeed(-ball.getySpeed());
+            wallHit.play();
         }
 
 
@@ -123,6 +149,7 @@ public class Main extends ApplicationAdapter {
             ball.getY() < player2.getY() + player2.getHeight() &&
             ball.getY() + ball.getHeight() > player2.getY()) {
             ball.setxSpeed(-xSpeedRng);
+            paddleHit.play();
         }
 
 
@@ -135,6 +162,7 @@ public class Main extends ApplicationAdapter {
             p2Score++;
             state = State.PAUSED;
             cooldownStartTime = TimeUtils.nanoTime();
+            score.play();
         }
         //Player 1 score
         if (ball.getX() + ball.getWidth() > Gdx.graphics.getWidth()) {
@@ -142,6 +170,7 @@ public class Main extends ApplicationAdapter {
             p1Score++;
             state = State.PAUSED;
             cooldownStartTime = TimeUtils.nanoTime();
+            score.play();
         }
         if (p1Score == 10 || p2Score == 10) {
             gameOverEvent();
@@ -207,7 +236,7 @@ public class Main extends ApplicationAdapter {
 
         batch.begin();
         fontMessage.draw(batch, testMessage, 375f, 1050f);
-        fontFpsMetter.draw(batch,"FPS: "+String.valueOf(Gdx.graphics.getFramesPerSecond()),Gdx.graphics.getWidth()-375f, 1050f);
+        fontFpsMetter.draw(batch, "FPS: " + String.valueOf(Gdx.graphics.getFramesPerSecond()), Gdx.graphics.getWidth() - 375f, 1050f);
         fontScoreMessage.draw(batch, String.valueOf(p1Score), (Gdx.graphics.getWidth() / 2) - 400f, (Gdx.graphics.getHeight() / 2f) + 50f);
         fontScoreMessage.draw(batch, String.valueOf(p2Score), (Gdx.graphics.getWidth() / 2) + 300f, (Gdx.graphics.getHeight() / 2f) + 50f);
         batch.end();
@@ -222,6 +251,9 @@ public class Main extends ApplicationAdapter {
     }
 
     private void reset() {
+
+        initialEvent();
+
         ball.setX(Gdx.graphics.getWidth() / 2);
         ball.setY(Gdx.graphics.getHeight() / 2);
         long currentTime = TimeUtils.nanoTime();
