@@ -10,7 +10,7 @@
 
 <h2 align="center">GAME OVER SCREEN</h2>
 
-![GameOverScreen](imags/GameOverScreen.png)
+![GameOverScreen](images/GameOverScreen.png)
 
 
 
